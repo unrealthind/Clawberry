@@ -1,38 +1,118 @@
-# Clawberry
+<div align="center">
 
-<p><img src="app/public/brand/logo.svg" alt="Clawberry" width="300" /></p>
+<img src="app/public/brand/logo.svg" alt="Clawberry" width="320" />
 
-**Run multiple persistent AI agents on your own hardware, with every external
-permission under your control.**
+### Your own team of AI agents. Running on your hardware. Answering to you.
 
-Clawberry is a self-hosted, multi-agent assistant platform: a Rust runtime built
-on [TinyClaw](https://github.com/suislanchez/tinyclaw) plus a React chat workspace.
-Each agent has its own identity, conversations, memory, tasks and tool boundaries,
-and can spin up temporary workers. Instead of handing a model your account keys,
-external actions go through administrator-owned n8n workflows, and writes need
-human approval plus a TOTP code.
+Persistent agents with their own memory, sub-agent workers, and a security model
+where **no agent touches your accounts without your approval and a TOTP code.**
 
-Clawberry is the public continuation of RaaviClaw, published with a clean Git
-history. Internal `raaviclaw` identifiers and the `tinyclaw` executable remain
-for compatibility, and the screenshots below still show the RaaviClaw name.
+[![License: GPL v3](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE)
+[![Rust 1.92](https://img.shields.io/badge/rust-1.92-orange.svg?logo=rust)](rust-toolchain.toml)
+[![React](https://img.shields.io/badge/app-React%20%2B%20TypeScript-61dafb.svg?logo=react&logoColor=white)](app/)
+[![Self-hosted](https://img.shields.io/badge/self--hosted-yes-2ea44f.svg)](#try-it-locally)
+[![Status: early stage](https://img.shields.io/badge/status-early%20stage-yellow.svg)](#help-finish-it)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-> **Early-stage open source — contributors wanted.** The local foundations are
-> implemented and heavily tested (thousands of Rust tests plus desktop/phone browser
-> checks). Production deployment, live integrations and the remaining app work are
-> unfinished. Run it in a development environment. See [Help finish it](#help-finish-it).
+[**Try it in 2 minutes**](#try-it-in-2-minutes) ·
+[**How it works**](#security-model-n8n-as-the-integration-boundary) ·
+[**Help build it**](#help-finish-it) ·
+[**Good first issues**](https://github.com/unrealthind/Clawberry/labels/good%20first%20issue)
 
-## Interface preview
-
-The running app in **sample mode** (`?mode=sample`). Conversations, approvals and
-usage figures are fictional; these do not demonstrate live integrations.
+<br />
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="docs/screenshots/janet-chat-light.jpg">
   <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/janet-chat.jpg">
-  <img src="docs/screenshots/janet-chat.jpg" alt="Janet's work conversation with the multi-agent sidebar, temporary workers, draft review, tasks and illustrative usage" width="1600">
+  <img src="docs/screenshots/janet-chat.jpg" alt="Janet's work conversation with the multi-agent sidebar, running sub-agents, a draft waiting for review, tasks and usage budget" width="900">
 </picture>
 
-*Janet, the work agent. The sidebar shows both permanent agents and their running workers.*
+<sub>Sample mode with fictional data. Janet (work) and Harley (personal) each run their own sub-agents, visible in the sidebar.</sub>
+
+</div>
+
+---
+
+## Why Clawberry?
+
+Most AI agent setups give a model your API keys and hope it behaves. Clawberry
+does the opposite: agents can research, plan and draft on their own, but
+**anything that changes the outside world goes through a gate you control.**
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 🧠 Persistent agents
+Each permanent agent has its own identity, conversations, memory, tasks and
+permissions. Work and personal stay separate, and nothing crosses between agents
+without your review.
+
+</td>
+<td width="50%" valign="top">
+
+### 🐝 Sub-agent workers
+Agents spin up temporary, scoped workers for research or prep. You watch their
+progress live, and results are archived with a full audit trail.
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+### 🔐 Approval + TOTP for every write
+External actions run only through n8n workflows you define. Writes show the exact
+action, need your approval, then a one-time code. Undeclared operations are
+rejected and everything fails closed.
+
+</td>
+<td width="50%" valign="top">
+
+### 🏠 Yours, end to end
+A lightweight Rust runtime built for an always-on LXC or VM, plus a polished
+React workspace for desktop and phone. Your data stays on your hardware.
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+### 💬 Chat-first workspace
+Focus Threads, tasks, calendar, activity, files, memory and approvals, all in one
+place, with light and dark themes.
+
+</td>
+<td width="50%" valign="top">
+
+### 📊 Budgets and model routing
+Fast, normal and deep model profiles with per-agent daily budgets, so a runaway
+worker can't run up your bill.
+
+</td>
+</tr>
+</table>
+
+> [!NOTE]
+> **Early stage, and looking for contributors.** The runtime, memory, tasks, workers,
+> security boundaries and most of the UI work locally and are covered by thousands of
+> Rust tests plus desktop/phone browser checks. Live integrations, always-on deployment
+> and some app features are still unfinished. [Here's where you can help.](#help-finish-it)
+
+## Try it in 2 minutes
+
+No API key needed. This runs the UI with a fictional sample workspace:
+
+```sh
+git clone https://github.com/unrealthind/Clawberry.git
+cd Clawberry
+npm --prefix app ci --ignore-scripts
+npm --prefix app run dev
+# open http://127.0.0.1:5173/?mode=sample
+```
+
+For the full runtime with real chat, see [Try it locally](#try-it-locally).
+
+## Screenshots
 
 <details>
 <summary>More screens: Harley, Focus Threads, tasks, calendar and activity</summary>
@@ -121,7 +201,7 @@ Python 3, a C/C++ toolchain, pkg-config and OpenSSL development headers. See
 [Rocky development](docs/rocky-development.md) for native dependencies and the
 repository-local toolchain wrapper. Other platforms need their own validation.
 
-Clone the public repository after publication:
+Clone the repository:
 
 ```sh
 git clone https://github.com/unrealthind/Clawberry.git
@@ -203,6 +283,10 @@ Report vulnerabilities privately using [SECURITY.md](SECURITY.md). Never submit
 credentials, personal records, private screenshots, runtime databases or logs.
 
 ## License and origins
+
+Clawberry is the public continuation of RaaviClaw. Internal `raaviclaw` identifiers,
+the `tinyclaw` executable and the app header in the screenshots still use the older
+names for compatibility.
 
 Clawberry is distributed under **GPL-3.0-only**; see [LICENSE](LICENSE).
 It builds on [TinyClaw](https://github.com/suislanchez/tinyclaw), itself derived from
