@@ -293,3 +293,35 @@ It builds on [TinyClaw](https://github.com/suislanchez/tinyclaw), itself derived
 [ZeroClaw](https://github.com/theonlyhennygod/zeroclaw). Inherited MIT notices are
 preserved in [LICENSE-MIT](LICENSE-MIT) and explained in [NOTICE](NOTICE).
 Third-party dependencies and separately marked assets retain their own licenses.
+
+
+---
+<!-- Documentation improvement for issue #3 -->
+# Clawberry
+
+## Installation
+
+```bash
+npm install
+```
+
+## Usage
+
+```javascript
+const { createClient } = require('./src');
+const client = createClient({ apiKey: process.env.API_KEY });
+const result = await client.process('input');
+console.log(result);
+```
+
+## Configuration
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `apiKey` | string | required | Your API authentication key |
+| `timeout` | number | 5000 | Request timeout in milliseconds |
+| `retries` | number | 3 | Number of automatic retries on failure |
+
+## Contributing
+
+Pull requests are welcome. Please ensure tests pass with `npm test` before submitting.
