@@ -1,0 +1,20 @@
+# Development container example; production acceptance remains unfinished.
+# Build this checkout instead of downloading an unrelated upstream image.
+# This serves the runtime gateway; it does not bundle the React app.
+services:
+  raaviclaw:
+    build:
+      context: .
+      target: release
+    image: raaviclaw:local
+    environment:
+      - API_KEY=${API_KEY:-}
+      - PROVIDER=${PROVIDER:-openrouter}
+    volumes:
+      # Matches Dockerfile HOME/config/workspace; keeps state across recreation.
+      - raaviclaw-data:/zeroclaw-data
+    ports:
+      - "127.0.0.1:3000:3000"
+
+volumes:
+  raaviclaw-data:

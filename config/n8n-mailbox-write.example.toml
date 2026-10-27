@@ -1,0 +1,6 @@
+name = "email_management"
+endpoint = "https://n8n.example.invalid/webhook/raaviclaw-mailbox-write"
+credential = "email_management_gateway"
+broker_identity = "raaviclaw-vm"
+allowed_agents = ["janet"]
+allowed_operations = ["folder.create", "folder.rename", "email.move", "email.copy", "email.archive", "email.mark_read", "email.mark_unread", "email.flag", "email.unflag", "email.tag_add", "email.tag_remove"]

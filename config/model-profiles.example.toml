@@ -1,0 +1,28 @@
+# Copy beside config.toml as model-profiles.toml. Credentials stay in runtime
+# configuration or profile-specific model_routes, never in agent definitions.
+# USD rates verified 2026-10-05:
+# https://platform.claude.com/docs/en/models/overview
+agent_daily_microusd = 5000000 # $5 per agent, UTC day
+deep_daily_microusd = 2000000  # $2 per agent, UTC day
+task_microusd = 2000000        # $2 lifetime per task, including retries
+
+[profiles.fast]
+provider = "anthropic"
+model = "claude-haiku-4-5-20251001"
+input_microusd_per_million = 1000000
+output_microusd_per_million = 5000000
+max_output_tokens = 4096
+
+[profiles.normal]
+provider = "anthropic"
+model = "claude-sonnet-5-5"
+input_microusd_per_million = 2000000
+output_microusd_per_million = 10000000
+max_output_tokens = 4096
+
+[profiles.deep]
+provider = "anthropic"
+model = "claude-opus-5-5"
+input_microusd_per_million = 4000000
+output_microusd_per_million = 20000000
+max_output_tokens = 4096

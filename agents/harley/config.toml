@@ -1,0 +1,8 @@
+id = "harley"
+name = "Harley"
+domain = "personal"
+model_profile = "normal"
+allowed_tools = []
+allowed_credentials = []
+heartbeat_enabled = false
+internal_capabilities = ["task.create", "task.list", "task.status", "thread.create", "thread.list", "thread.summary", "thread.read", "agent.spawn", "agent.status", "agent.wait", "memory.candidates", "memory.promote", "memory.reject", "reasoning.escalate"]

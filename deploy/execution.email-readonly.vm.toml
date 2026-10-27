@@ -1,0 +1,14 @@
+# Concrete VM image from 2026-10-06 acceptance build; review before installation.
+# No operations are enabled by installing this file alone.
+root_policy = "/etc/tinyclaw/security/root-policy.toml"
+guard_credential = "huggingface_guard"
+read_contracts = ["/etc/tinyclaw/security/n8n-email-readonly.toml"]
+write_contracts = []
+[sandbox]
+image = "localhost/raaviclaw-sandbox@sha256:89e2ed0946042a294e2ca4ebeacc832c264704a96eb695d7da06fdb37d7cd5b1"
+timeout_secs = 30
+memory_mb = 512
+cpus = 1
+[agent_capabilities]
+janet = ["n8n.read"]
+harley = []

@@ -1,0 +1,11 @@
+RaaviClaw
+
+RaaviClaw modifications are distributed under the GNU General Public License,
+version 3 only (SPDX-License-Identifier: GPL-3.0-only). See LICENSE.
+Copyright (c) 2026 RaaviClaw contributors.
+
+This project is derived from TinyClaw (https://github.com/suislanchez/tinyclaw),
+itself derived from ZeroClaw. The inherited MIT copyright and permission
+notice is reproduced unchanged in LICENSE-MIT. Existing upstream code retains
+its MIT terms; the modified combined project is distributed under GPLv3.
+Third-party dependencies and separately marked assets retain their own licenses.

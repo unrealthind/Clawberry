@@ -1,0 +1,13 @@
+title = "RaaviClaw secret scanning"
+
+[extend]
+useDefault = true
+
+# Exact inherited encryption-test fixture, also present in historical commits.
+# This is not a provider-issued credential. Never allowlist live credentials.
+[[rules]]
+id = "generic-api-key"
+[[rules.allowlists]]
+description = "Literal dummy credential used by SecretStore roundtrip tests"
+regexTarget = "secret"
+regexes = ['''^sk-my-secret-api-key-12345$''']

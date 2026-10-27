@@ -1,0 +1,16 @@
+# DENY ALL by default. Install under /etc/tinyclaw/security/root-policy.toml
+# with root ownership; all ancestors must be root-owned and not group/world
+# writable. The Linux execution service must not run as root.
+rules = []
+
+# Only after the workflow, secret scopes, live Guard and runtime integration
+# are accepted, an administrator may add an exact named read rule:
+# [[rules]]
+# agent = "janet"
+# capability = "n8n.read"
+# operation = "n8n.read"
+# resource = "email_work_readonly"
+# autonomous_read = true
+#
+# autonomous_read is prohibited for shell/package/media/write operations.
+# Writes need their separate reviewed n8n/TOTP path, never this allowlist.

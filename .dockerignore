@@ -1,0 +1,88 @@
+# Git history (may contain old secrets)
+.git
+.gitignore
+.githooks
+
+# Rust build artifacts (can be multiple GB)
+target
+.runtime
+
+# Documentation and examples (not needed for runtime)
+docs
+examples
+tests
+
+# Markdown files (README, CHANGELOG, etc.)
+*.md
+
+# Images (unnecessary for build)
+*.png
+*.svg
+*.jpg
+*.jpeg
+*.gif
+
+# SQLite databases (conversation history, cron jobs)
+*.db
+*.db-journal
+
+# macOS artifacts
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# CI/CD configs (not needed in image)
+.github
+
+# Cargo deny config (lint tool, not runtime)
+deny.toml
+
+
+# Temporary files
+.tmp_*
+*.tmp
+*.bak
+*.swp
+*~
+
+# IDE and editor configs
+.idea
+.vscode
+*.iml
+
+# Windsurf workflows
+.windsurf
+
+# Environment files (may contain secrets)
+.env
+.env.*
+!.env.example
+
+# Coverage and profiling
+*.profraw
+*.profdata
+coverage
+lcov.info
+
+.aws
+.ssh
+.agents
+.codex
+.tinyclaw
+.tools
+data
+archive
+archives
+playground
+secrets
+*.pem
+*.key
+*.p12
+*.pfx
+*.db-wal
+*.db-shm
+*.sqlite*
+*.log
+app/node_modules
+app/test-results
+app/playwright-report

@@ -1,0 +1,35 @@
+# Prepared Janet read contract. Install only after live acceptance, root-owned under /etc/tinyclaw/security.
+# Credential contains the secret only; transport adds the Bearer prefix.
+# No endpoint/credential is automatically registered or enabled.
+name = "email_work_readonly"
+endpoint = "https://n8n.example.invalid/webhook/email-readonly"
+credential = "email_work_read"
+allowed_agents = ["janet"]
+response_format = "email_readonly_v2"
+response_fields = ["ok", "read_only", "op", "mailbox", "uid", "count", "messages", "mailbox_errors", "query", "attachments", "mime_safeguards", "from", "to", "execution_id", "subject", "date", "body", "body_truncated", "message_id", "reply_to"]
+allowed_operations = ["read", "search", "unread", "recent", "attachment_list"]
+
+[required_fields]
+read = ["mailbox", "uid"]
+search = ["mailbox", "q", "max"]
+unread = ["mailbox", "max"]
+recent = ["mailbox", "max"]
+attachment_list = ["mailbox", "uid"]
+
+[fields.mailbox]
+type = "choice"
+values = ["INBOX", "Sent", "Archive"]
+
+[fields.uid]
+type = "integer"
+min = 1
+max = 2147483647
+
+[fields.max]
+type = "integer"
+min = 1
+max = 30
+
+[fields.q]
+type = "text"
+max_bytes = 500

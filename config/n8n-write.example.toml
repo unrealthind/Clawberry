@@ -1,0 +1,9 @@
+# This is the runtime adapter contract, not an unreviewed n8n export.
+# Root-owned configuration. Its gateway must enforce transactional TOTP replay
+# protection and return exact manifest hashes/session/action correlation.
+name = "email_write"
+endpoint = "https://n8n.example.invalid/webhook/raaviclaw-write"
+credential = "email_write_gateway"
+broker_identity = "raaviclaw-vm"
+allowed_agents = ["janet"]
+allowed_operations = ["email.send", "email.reply", "email.forward"]

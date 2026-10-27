@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>Clawberry</title>
+  <rect width="64" height="64" rx="12" fill="#17191C"/>
+  <path fill="#F5F6F7" transform="translate(8 8) scale(.75)" d="M12 10h8v44h-8zM26 10h10c10 0 16 6 16 15 0 7-4 12-11 14l13 15H43L26 34v-4h10c5 0 8-2 8-5s-3-7-8-7H26z"/>
+</svg>

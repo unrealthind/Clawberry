@@ -1,0 +1,18 @@
+# Host administrator installs reviewed configuration at:
+# /etc/tinyclaw/security/execution.toml (root-owned mode 0644).
+root_policy = "/etc/tinyclaw/security/root-policy.toml"
+guard_credential = "huggingface_guard"
+read_contracts = []
+write_contracts = []
+[sandbox]
+# Replace with the actual RepoDigest of an administrator-built sandbox image.
+image = "localhost/raaviclaw-sandbox@sha256:REPLACE_WITH_64_HEX_DIGEST"
+timeout_secs = 30
+memory_mb = 512
+cpus = 1
+
+# Opt in only after validating each deployed integration and host policy.
+# Human approval and reconciliation capabilities are deliberately unavailable here.
+[agent_capabilities]
+janet = []
+harley = []

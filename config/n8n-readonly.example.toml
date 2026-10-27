@@ -1,0 +1,34 @@
+# Example only. Review the deployed workflow and install an adapted copy under
+# /etc/tinyclaw/security, owned by root and not writable by the runtime.
+# No endpoint/credential is automatically registered or enabled.
+name = "email_work_readonly"
+endpoint = "https://n8n.example.invalid/webhook/email-readonly"
+credential = "email_work_read"
+allowed_agents = ["janet"]
+response_fields = ["ok", "data", "audit_id", "execution_id"]
+allowed_operations = ["read", "search", "unread", "recent", "attachment_list"]
+
+[required_fields]
+read = ["mailbox", "uid"]
+search = ["mailbox", "q", "max"]
+unread = ["mailbox", "max"]
+recent = ["mailbox", "max"]
+attachment_list = ["mailbox", "uid"]
+
+[fields.mailbox]
+type = "choice"
+values = ["INBOX", "Sent", "Archive"]
+
+[fields.uid]
+type = "integer"
+min = 1
+max = 2147483647
+
+[fields.max]
+type = "integer"
+min = 1
+max = 30
+
+[fields.q]
+type = "text"
+max_bytes = 500

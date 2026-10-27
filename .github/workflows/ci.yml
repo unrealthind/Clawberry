@@ -1,0 +1,191 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop, feat/multi-agent-foundation]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  changes:
+    name: Detect Change Scope
+    runs-on: ubuntu-latest
+    outputs:
+      docs_only: ${{ steps.scope.outputs.docs_only }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect docs-only changes
+        id: scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+          else
+            BASE="${{ github.event.before }}"
+          fi
+          if [ -z "$BASE" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          CHANGED="$(git diff --name-only "$BASE" HEAD || true)"
+          if [ -z "$CHANGED" ]; then
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          docs_only=true
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            if [[ "$file" == docs/* ]] \
+              || [[ "$file" == *.md ]] \
+              || [[ "$file" == *.mdx ]] \
+              || [[ "$file" == "LICENSE" ]] \
+              || [[ "$file" == .github/ISSUE_TEMPLATE/* ]] \
+              || [[ "$file" == .github/pull_request_template.md ]]; then
+              continue
+            fi
+            docs_only=false
+            break
+          done <<< "$CHANGED"
+          echo "docs_only=$docs_only" >> "$GITHUB_OUTPUT"
+
+  rust:
+    name: Rust 1.92 — fmt, clippy, test, build
+    needs: [changes]
+    if: needs.changes.outputs.docs_only != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: "1.92"
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: Verify pinned toolchain
+        run: |
+          rustc --version
+          cargo --version
+          rustc --version | grep -q '1\.92\.'
+      - name: Formatting
+        run: cargo fmt --all -- --check
+      - name: Clippy
+        run: cargo clippy --locked --all-targets -- -D warnings
+      - name: Full test suite
+        run: cargo test --locked --all-targets --verbose
+      - name: Tiny feature suite
+        run: cargo test --locked --no-default-features --features tiny --all-targets
+      - name: Standard feature suite
+        run: cargo test --locked --no-default-features --features standard --all-targets
+      - name: Release build
+        run: cargo build --release --locked --verbose
+
+  frontend:
+    name: Frontend — build, tests, format
+    needs: [changes]
+    if: needs.changes.outputs.docs_only != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci --ignore-scripts
+      - run: npm run build
+      - run: npm test
+      - run: npx prettier --check src e2e playwright.config.ts vite.config.ts tsconfig.json package.json index.html
+
+  browser:
+    name: Browser — desktop and phone smoke
+    needs: [changes]
+    if: needs.changes.outputs.docs_only != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci --ignore-scripts
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+
+  deployment-static:
+    name: Deployment static checks
+    needs: [changes]
+    if: needs.changes.outputs.docs_only != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+      - name: Shell syntax
+        run: |
+          sh -n deploy/setup-execution-host.sh
+          sh -n deploy/verify-rocky10.sh
+          shellcheck deploy/setup-execution-host.sh deploy/verify-rocky10.sh
+      - name: Build sandbox image
+        run: docker build -f deploy/Containerfile.sandbox -t raaviclaw-sandbox-ci .
+      - name: Verify sandbox image has expected tools
+        run: |
+          docker run --rm --network none raaviclaw-sandbox-ci sh -lc 'command -v python3 && command -v ffmpeg && command -v file'
+
+  docs-only:
+    name: Docs-Only Fast Path
+    needs: [changes]
+    if: needs.changes.outputs.docs_only == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Docs-only change detected; heavy jobs skipped."
+
+  ci-required:
+    name: CI Required Gate
+    if: always()
+    needs: [changes, rust, frontend, browser, deployment-static, docs-only]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enforce required status
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ needs.changes.outputs.docs_only }}" = "true" ]; then
+            [ "${{ needs.docs-only.result }}" = "success" ]
+            exit 0
+          fi
+          for result in \
+            "${{ needs.rust.result }}" \
+            "${{ needs.frontend.result }}" \
+            "${{ needs.browser.result }}" \
+            "${{ needs.deployment-static.result }}"; do
+            if [ "$result" != "success" ]; then
+              echo "Required CI job failed or was skipped: $result"
+              exit 1
+            fi
+          done
+          echo "All required CI jobs passed."
